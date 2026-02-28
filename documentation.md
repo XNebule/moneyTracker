@@ -86,8 +86,7 @@ based on that defintion i know that to operate website thru front-end, it must b
           return result.rows[0];
       })
   ```
-
-        this will delete expenses data(with specific id that retrieve from database)
+  this will delete expenses data(with specific id that retrieve from database)
 
 Registed/Login credential implementation:
 More or less the system are the same as expenses system, it requires [routes, controller, services, databases, middleware(to handle error/hack)]
