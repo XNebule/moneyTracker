@@ -1,34 +1,22 @@
-require("dotenv").config()
-const express = require("express")
-const client = require("./config/db")
-const eR = require("./modules/expenses/expenses.routes")
-const aR = require("./modules/auth/auth.routes")
-const cR = require("./modules/categories/categories.routes")
-const errMid = require("../middleware/error.middleware")
-const authMid = require("../middleware/auth.middleware")
+require("dotenv").config();
 
-const app = express()
-const port = 3000
+const client = require("./config/db");
+const app = require("./app");
 
-app.use(express.json())
-app.use("/api/expenses",authMid, eR)
-app.use("/api/categories",authMid, cR)
-app.use("/api/auth", aR)
-app.use(errMid)
+const port = process.env.PORT || 3000;
 
-app.use(express.static("public"))
-
-async function startServer() {
+const startServer = async () => {
   try {
-    await client.connect()
-    console.log('Database and Server launched')
+    await client.connect();
+    console.log("Database Connected!");
 
     app.listen(port, () => {
-      console.log(`Server running on port ${port}`)
-    })
+      console.log(`Server running on port ${port}`);
+    });
   } catch (err) {
-    console.error("Error starting server: ", err)
+    console.error("Error starting server: ", err);
+    process.exit(1);
   }
-}
+};
 
-startServer()
+startServer();
