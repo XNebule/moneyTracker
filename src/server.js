@@ -1,18 +1,20 @@
 require("dotenv").config()
 const express = require("express")
-const client = require("./db")
-const eR = require("./routes/expenses")
-const eP = require("./routes/users")
-const eMw = require("./middleware/errMW")
-const authMW = require("./middleware/authMW")
+const client = require("./config/db")
+const eR = require("./modules/expenses/expenses.routes")
+const aR = require("./modules/auth/auth.routes")
+const cR = require("./modules/categories/categories.routes")
+const errMid = require("../middleware/error.middleware")
+const authMid = require("../middleware/auth.middleware")
 
 const app = express()
 const port = 3000
 
 app.use(express.json())
-app.use("/api/expenses",authMW, eR)
-app.use("/api/auth", eP)
-app.use(eMw)
+app.use("/api/expenses",authMid, eR)
+app.use("/api/categories",authMid, cR)
+app.use("/api/auth", aR)
+app.use(errMid)
 
 app.use(express.static("public"))
 
