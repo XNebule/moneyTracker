@@ -1,11 +1,19 @@
-const { Client } = require("pg")
+const { Pool } = require("pg")
 
-const client = new Client({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_NAME,
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT,
+if (!process.env.DATABASE_URL) {
+  throw new Error("DATABASE_URL is required")
+}
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  max: 20,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 2000,
 });
 
-module.exports = client
+pool.on("error", (err) => {
+  console.error("Unexpected DB pool error: ", err)
+  process.exit(-1)
+})
+
+module.exports = pool
