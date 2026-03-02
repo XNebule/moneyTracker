@@ -6,9 +6,9 @@ exports.inputExp = async (req, res, next) => {
     const userId = req.user.userId;
 
     if (!title || amount == null) {
-      return res.status(400).json({
-        Error: "Title and Amount required",
-      });
+      const error = new Error("Title and Amount can't be empty!");
+      error.status = 400;
+      throw error;
     }
 
     const data = await eS.createExpense(title, amount, userId, categoryId);
@@ -24,9 +24,9 @@ exports.getExps = async (req, res, next) => {
     const data = await eS.getAllExpenses(userId);
 
     if (!data) {
-      return res.status(404).json({
-        Error: "Expense not found!",
-      });
+      const error = new Error("Expenses can't be found!");
+      error.status = 404;
+      throw error;
     }
     res.json(data);
   } catch (err) {
@@ -40,7 +40,9 @@ exports.getExp = async (req, res, next) => {
     const userId = req.user.userId;
 
     if (!id) {
-      return res.status(404).json({ Error: "Expense not found" });
+      const error = new Error("Expense can't be found!");
+      error.status = 404;
+      throw error;
     }
 
     const data = await eS.getExpensesById(id, userId);
@@ -57,9 +59,9 @@ exports.deleteExp = async (req, res, next) => {
     const data = await eS.deleteExpense(id, userId);
 
     if (!data) {
-      return res.status(404).json({
-        Error: "Result can't be found",
-      });
+      const error = new Error("Result can't be found!");
+      error.status = 404;
+      throw error;
     }
 
     res.json({ Message: "Deleted Successfully" });
@@ -75,17 +77,17 @@ exports.updateExp = async (req, res, next) => {
     const userId = req.user.userId;
 
     if (!title || amount == null) {
-      return res.status(400).json({
-        error: "Title and amount required!",
-      });
+      const error = new Error("Title and Amount can't be empty!");
+      error.status = 400;
+      throw error;
     }
 
     const data = await eS.updateExpense(id, title, amount, categoryId, userId);
 
     if (!data) {
-      return res.status(400).json({
-        error: "Expenses not found",
-      });
+      const error = new Error("Expense cannot be found!");
+      error.status = 400;
+      throw error;
     }
 
     res.json(data);

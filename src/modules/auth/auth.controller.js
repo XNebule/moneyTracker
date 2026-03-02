@@ -7,9 +7,9 @@ exports.regCred = async (req, res, next) => {
     const { email, password } = req.body;
 
     if (!email || password == null) {
-      return res.status(400).json({
-        Error: "Email and Password required",
-      });
+      const error = new Error("Email and password required!");
+      error.status = 400;
+      throw error;
     }
 
     const hashedPass = await bcrypt.hash(password, 10);
@@ -18,9 +18,9 @@ exports.regCred = async (req, res, next) => {
     res.status(201).json(data);
   } catch (err) {
     if (err.code === "23505") {
-      return res.status(409).json({
-        error: "Email already registered!",
-      });
+      const error = new Error("Email already registered!");
+      error.status = 409;
+      throw error;
     }
     next(err);
   }
@@ -41,7 +41,9 @@ exports.getCred = async (req, res, next) => {
     const data = await aS.userCredId(id);
 
     if (!data) {
-      return res.status(404).json({ error: "User not found!" });
+      const error = new Error("User can't be found!");
+      error.status = 404;
+      throw error;
     }
     res.json(data);
   } catch (err) {
@@ -55,9 +57,9 @@ exports.delCred = async (req, res, next) => {
     const data = await aS.deleteCred(id);
 
     if (!data) {
-      return res.status(404).json({
-        Error: "User not found!",
-      });
+      const error = new Error("user not found!")
+      error.status = 404
+      throw error
     }
 
     res.json({ Message: "Deleted successfully" });
@@ -71,25 +73,25 @@ exports.loginCred = async (req, res, next) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({
-        error: "Email and Password required!",
-      });
+      const error = new Error("Email and Password required!")
+      error.status = 400
+      throw error
     }
 
     const user = await aS.findUserByEmail(email);
 
     if (!user) {
-      return res.status(401).json({
-        error: "Invalid Credentials!",
-      });
+      const error = new Error("Invalid Credetial!")
+      error.status = 401
+      throw error
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-      return res.status(401).json({
-        error: "Invalid Credentials!",
-      });
+      const error = new Error("Invalid Credetial!");
+      error.status = 401;
+      throw error;
     }
 
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {

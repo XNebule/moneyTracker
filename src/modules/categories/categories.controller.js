@@ -6,13 +6,16 @@ exports.createCat = async (req, res, next) => {
     const userId = req.user.userId;
 
     if (!name) {
-      return res.status(400).json({
-        Error: "Field cannot be empty!",
-      });
+      const error = new Error("Field cannot be empty!");
+      error.status = 400;
+      throw error;
     }
 
     const data = await cs.createCategory(name, userId);
-    res.status(201).json(data);
+    res.status(201).json({
+      success: true,
+      data,
+    });
   } catch (err) {
     next(err);
   }
@@ -23,10 +26,10 @@ exports.getCats = async (req, res, next) => {
     const userId = req.user.userId;
     const data = await cs.getCategories(userId);
 
-    if (!data) {
-      return res.status(404).json({
-        Error: "Category not found!",
-      });
+    if (data.lenth === 0) {
+      const error = new Error("Category not found!");
+      error.status = 404;
+      throw error;
     }
 
     res.json(data);
@@ -41,9 +44,9 @@ exports.getCat = async (req, res, next) => {
     const userId = req.user.userId;
 
     if (!id) {
-      return res.status(404).json({
-        Error: "Category not found!",
-      });
+      const error = new Error("Category not found!")
+      error.status = 404
+      throw error
     }
 
     const data = await cs.getCatById(id, userId);
@@ -60,9 +63,9 @@ exports.deleteCat = async (req, res, next) => {
     const data = await cs.deleteCategories(id, userId);
 
     if (!data) {
-      return res.status(404).json({
-        Error: "Result can't be found",
-      });
+      const error = new Error("Result can't be found!")
+      error.status = 404
+      throw error
     }
 
     res.json({ Message: "Deleted Successfully!" });
