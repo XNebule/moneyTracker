@@ -29,7 +29,7 @@ exports.regCred = async (req, res, next) => {
 exports.getCreds = async (req, res, next) => {
   try {
     const data = await aS.usersCredential();
-    res.json(data);
+    res.status(200).json(data);
   } catch (err) {
     next(err);
   }
@@ -45,7 +45,7 @@ exports.getCred = async (req, res, next) => {
       error.status = 404;
       throw error;
     }
-    res.json(data);
+    res.status(200).json(data);
   } catch (err) {
     next(err);
   }

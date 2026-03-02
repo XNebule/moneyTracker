@@ -7,7 +7,9 @@ exports.createExpense = async (title, amount, userId, categoryId) => {
   );
 
   if (catCheck.rows.length === 0) {
-    throw new Error("Invalid category for this user");
+    const error = new Error("Invalid category for this user");
+    error.status = 403;
+    throw error;
   }
 
   const result = await client.query(
@@ -48,7 +50,9 @@ exports.updateExpense = async (id, title, amount, categoryId, userId) => {
   );
 
   if (categoryCheck.rows.length === 0) {
-    throw new Error("Invalid category for this user");
+    const error = new Error("Invalid category for this user");
+    error.status = 403;
+    throw error;
   }
 
   const result = await client.query(

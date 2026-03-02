@@ -32,7 +32,7 @@ exports.getCats = async (req, res, next) => {
       throw error;
     }
 
-    res.json(data);
+    res.status(200).json(data);
   } catch (err) {
     next(err);
   }
@@ -42,14 +42,15 @@ exports.getCat = async (req, res, next) => {
   try {
     const { id } = req.params;
     const userId = req.user.userId;
-
-    if (!id) {
+    
+    const data = await cs.getCatById(id, userId);
+    
+    if (!data) {
       const error = new Error("Category not found!")
       error.status = 404
       throw error
     }
 
-    const data = await cs.getCatById(id, userId);
     res.status(200).json(data);
   } catch (err) {
     next(err);

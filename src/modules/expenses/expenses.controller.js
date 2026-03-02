@@ -28,7 +28,7 @@ exports.getExps = async (req, res, next) => {
       error.status = 404;
       throw error;
     }
-    res.json(data);
+    res.status(200).json(data);
   } catch (err) {
     next(err);
   }
@@ -46,7 +46,7 @@ exports.getExp = async (req, res, next) => {
     }
 
     const data = await eS.getExpensesById(id, userId);
-    res.json(data);
+    res.status(200).json(data);
   } catch (err) {
     next(err);
   }
@@ -78,7 +78,7 @@ exports.updateExp = async (req, res, next) => {
 
     if (!title || amount == null) {
       const error = new Error("Title and Amount can't be empty!");
-      error.status = 400;
+      error.status = 404;
       throw error;
     }
 
