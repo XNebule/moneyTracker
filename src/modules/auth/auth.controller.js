@@ -57,9 +57,9 @@ exports.delCred = async (req, res, next) => {
     const data = await aS.deleteCred(id);
 
     if (!data) {
-      const error = new Error("user not found!")
-      error.status = 404
-      throw error
+      const error = new Error("user not found!");
+      error.status = 404;
+      throw error;
     }
 
     res.json({ Message: "Deleted successfully" });
@@ -73,17 +73,17 @@ exports.loginCred = async (req, res, next) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      const error = new Error("Email and Password required!")
-      error.status = 400
-      throw error
+      const error = new Error("Email and Password required!");
+      error.status = 400;
+      throw error;
     }
 
     const user = await aS.findUserByEmail(email);
 
     if (!user) {
-      const error = new Error("Invalid Credetial!")
-      error.status = 401
-      throw error
+      const error = new Error("Invalid Credetial!");
+      error.status = 401;
+      throw error;
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
