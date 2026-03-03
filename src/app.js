@@ -3,9 +3,8 @@ const helmet = require("helmet")
 const cors = require("cors")
 const rateLimit = require("express-rate-limit")
 
-const expensesRoutes = require("./modules/expenses/expenses.routes");
 const authRoutes = require("./modules/auth/auth.routes");
-const categoriesRoutes = require("./modules/categories/categories.routes");
+const transactionRoutes = require("./routes/transaction.routes")
 
 const authMiddleware = require("../middleware/auth.middleware");
 const errorMiddleware = require("../middleware/error.middleware");
@@ -29,8 +28,8 @@ app.use(express.json());
 app.use(express.static("public"));
 
 app.use("/api/auth", authRoutes);
-app.use("/api/expenses", authMiddleware, expensesRoutes);
-app.use("/api/categories", authMiddleware, categoriesRoutes);
+
+app.use("/api/transaction", authMiddleware, transactionRoutes)
 
 app.use(errorMiddleware);
 

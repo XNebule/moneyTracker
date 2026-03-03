@@ -3,7 +3,6 @@ const router = express.Router()
 const authMid = require("../../../middleware/auth.middleware")
 const { createCat, getCats, getCat, deleteCat } = require("./categories.controller")
 
-router.use(authMid)
 router.post('/', createCat)
 router.get('/', getCats)
 router.get('/:id', getCat)
