@@ -4,7 +4,8 @@ const cors = require("cors")
 const rateLimit = require("express-rate-limit")
 
 const authRoutes = require("./modules/auth/auth.routes");
-const transactionRoutes = require("./routes/transaction.routes")
+const transactionRoutes = require("./modules/transactions/transactions.routes")
+const categoryRoutes = require('./modules/categories/categories.routes')
 
 const authMiddleware = require("../middleware/auth.middleware");
 const errorMiddleware = require("../middleware/error.middleware");
@@ -29,7 +30,8 @@ app.use(express.static("public"));
 
 app.use("/api/auth", authRoutes);
 
-app.use("/api/transaction", authMiddleware, transactionRoutes)
+app.use("/api/transactions", authMiddleware, transactionRoutes)
+app.use("/api/categoriesrs", authMiddleware, categoryRoutes)
 
 app.use(errorMiddleware);
 
