@@ -22,7 +22,7 @@ exports.getDashboardSummary = async (userId) => {
   return {
     revenue,
     expense,
-    balance: (revenue = expense),
+    balance: (revenue - expense),
   };
 };
 
