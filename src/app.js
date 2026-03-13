@@ -7,6 +7,7 @@ const authRoutes = require("./modules/auth/auth.routes");
 const dashboardRoutes = require("./modules/dashboards/dashboards.routes")
 const transactionRoutes = require("./modules/transactions/transactions.routes")
 const categoryRoutes = require('./modules/categories/categories.routes')
+const analyticRoutes = require('./modules/analytics/analytics.routes')
 
 const authMiddleware = require("../middleware/auth.middleware");
 const errorMiddleware = require("../middleware/error.middleware");
@@ -32,8 +33,9 @@ app.use(express.static("public"));
 app.use("/api/auth", authRoutes);
 
 app.use("/api/dashboard", authMiddleware, dashboardRoutes)
-app.use("/api/transactions", authMiddleware, transactionRoutes)
-app.use("/api/categories", authMiddleware, categoryRoutes)
+app.use("/api/transaction", authMiddleware, transactionRoutes)
+app.use("/api/categorie", authMiddleware, categoryRoutes)
+app.use("/api/analytic", authMiddleware, analyticRoutes)
 
 app.use(errorMiddleware);
 
