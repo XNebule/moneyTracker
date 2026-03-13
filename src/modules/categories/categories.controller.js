@@ -74,3 +74,33 @@ exports.deleteCat = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.updateCat = async (req, res, next) => {
+  try {
+    const { id } = req.params
+    const { name } = req.body
+    const userId = req.user.userId
+    
+    if (!name) {
+      const error = new Error("Category name is required")
+      error.status = 400
+      throw error
+    }
+
+    const data = await cS.updateCategory(id, name, userId)
+
+    if (!data) {
+      const error = new Error("Category not found")
+      error.status = 404
+      throw error
+    }
+
+    res.json({
+      success: true,
+      data
+    })
+
+  } catch (err) {
+    next(err)
+  }
+}

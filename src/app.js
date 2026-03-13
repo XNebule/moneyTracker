@@ -34,7 +34,7 @@ app.use("/api/auth", authRoutes);
 
 app.use("/api/dashboard", authMiddleware, dashboardRoutes)
 app.use("/api/transaction", authMiddleware, transactionRoutes)
-app.use("/api/categorie", authMiddleware, categoryRoutes)
+app.use("/api/category", authMiddleware, categoryRoutes)
 app.use("/api/analytic", authMiddleware, analyticRoutes)
 
 app.use(errorMiddleware);

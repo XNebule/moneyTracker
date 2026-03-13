@@ -18,6 +18,43 @@ exports.getCashflow = async (userId) => {
   return {
     revenue,
     expense,
-    balance: revenue - expense
-  }
+    balance: revenue - expense,
+  };
+};
+
+exports.getMonthlyExpenses = async (userId) => {
+  const result = await client.query(
+    `
+    SELECT
+      DATE_TRUNC('month', date) AS month,
+      SUM(amount) AS total
+    FROM transactions
+    WHERE user_id = $1
+      AND type = 'expense'
+    GROUP BY month
+    ORDER BY month
+    `,
+    [userId],
+  );
+
+  return result.rows;
+};
+
+exports.getCatBreakdown = async (userId) => {
+  const result = await client.query(
+    `
+    SELECT
+      c.name AS category,
+      SUM(t.amount) AS total
+    FROM transactions t
+    JOIN categories c ON c.id = t.category_id
+    WHERE t.user_id = $1
+      AND t.type = 'expense'
+    GROUP by c.name
+    ORDER by total DESC
+    `,
+    [userId],
+  );
+
+  return result.rows;
 };
