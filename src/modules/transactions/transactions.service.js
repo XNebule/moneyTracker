@@ -41,7 +41,7 @@ exports.createTransaction = async ({
 };
 
 exports.getAllTransactions = async (userId, queryParams) => {
-  const {
+  let {
     page = 1,
     limit = 10,
     category,
@@ -54,77 +54,86 @@ exports.getAllTransactions = async (userId, queryParams) => {
     order = "desc",
   } = queryParams;
 
-  const offset = (page - 1) * limit;
+  const pageNum = parseInt(page) || 1;
+  const limitNum = parseInt(limit) || 10;
+  const offset = (pageNum - 1) * limitNum;
 
-  let values = [userId];
-  let conditions = ["user_id = $1"];
+  const conditions = ["t.user_id = $1"];
+  const values = [userId];
   let index = 2;
 
   if (type) {
-    conditions.push(`type = $${index++}`);
+    conditions.push(`t.type = $${index++}`);
     values.push(type);
   }
 
   if (category) {
-    conditions.push(`category_id = $${index++}`);
-    values.push(category);
+    conditions.push(`t.category_id = $${index++}`);
+    values.push(parseInt(category));
   }
 
   if (minAmount) {
-    conditions.push(`amount >= $${index++}`);
-    values.push(minAmount);
+    conditions.push(`t.amount >= $${index++}`);
+    values.push(parseInt(minAmount));
   }
 
   if (maxAmount) {
-    conditions.push(`amount <= $${index++}`);
-    values.push(maxAmount);
+    conditions.push(`t.amount <= $${index++}`);
+    values.push(parseInt(maxAmount));
   }
 
   if (startDate) {
-    conditions.push(`date >= $${index++}`);
+    conditions.push(`t.date >= $${index++}`);
     values.push(startDate);
   }
 
   if (endDate) {
-    conditions.push(`date <= $${index++}`);
+    conditions.push(`t.date <= $${index++}`);
     values.push(endDate);
   }
 
   const whereClause = `WHERE ${conditions.join(" AND ")}`;
 
-  const allowedSortFields = ["amount", "date", "created_at"];
-  const sortField = allowedSortFields.includes(sort) ? sort : "created_at";
-
-  const sortOrder = order.toLowerCase() === "asc" ? "ASC" : "DESC";
+  const allowedSort = ["amount", "date", "created_at"];
+  const sortField = allowedSort.includes(sort) ? `t.${sort}` : "t.created_at";
+  const sortOrder = order?.toLowerCase() === "asc" ? "ASC" : "DESC";
 
   const countQuery = `
     SELECT COUNT(*)
-    FROM transactions
+    FROM transactions t
     ${whereClause}
   `;
 
   const totalResult = await client.query(countQuery, values);
-  const totalDocuments = parseInt(totalResult.rows[0].count);
+  const totalDocuments = Number(totalResult.rows[0].count);
 
   const dataQuery = `
-    SELECT *
-    FROM transactions
+    SELECT
+      t.id,
+      t.title,
+      t.amount,
+      t.type,
+      t.date,
+      t.created_at,
+      t.category_id,
+      c.name AS category
+    FROM transactions t
+    LEFT JOIN categories c ON c.id = t.category_id
     ${whereClause}
     ORDER BY ${sortField} ${sortOrder}
     LIMIT $${index++}
     OFFSET $${index}
   `;
 
-  values.push(limit, offset);
-
-  const result = await client.query(dataQuery, values);
+  const dataValues = [...values, limitNum, offset];
+  const result = await client.query(dataQuery, dataValues);
 
   return {
     data: result.rows,
     totalDocuments,
-    totalPages: Math.ceil(totalDocuments / limit),
-    page: Number(page),
-    limit: Number(limit),
+    totalPages: Math.ceil(totalDocuments / limitNum),
+    page: pageNum,
+    limit: limitNum,
   };
 };
 

@@ -36,16 +36,19 @@ exports.getTransactions = async (req, res, next) => {
   try {
     const userId = req.user.userId;
 
-    const result = await tS.getAllTransactions(userId, req.query);
+    const { data, totalDocuments, totalPages, page, limit } =
+      await tS.getAllTransactions(userId, req.query);
 
     res.status(200).json({
       success: true,
-      count: result.data.length,
-      page: result.page,
-      limit: result.limit,
-      totalPages: result.totalPages,
-      totalDocuments: result.totalDocuments,
-      data: result.data,
+      count: data.length,
+      pagination: {
+        page,
+        limit,
+        totalPages,
+        totalDocuments,
+      },
+      data,
     });
   } catch (err) {
     next(err);

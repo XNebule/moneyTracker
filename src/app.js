@@ -33,7 +33,7 @@ app.use("/api/auth", authRoutes);
 
 app.use("/api/dashboard", authMiddleware, dashboardRoutes)
 app.use("/api/transactions", authMiddleware, transactionRoutes)
-app.use("/api/categoriesrs", authMiddleware, categoryRoutes)
+app.use("/api/categories", authMiddleware, categoryRoutes)
 
 app.use(errorMiddleware);
 
