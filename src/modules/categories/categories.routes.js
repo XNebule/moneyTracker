@@ -1,11 +1,10 @@
 const express = require("express")
 const router = express.Router()
-const authMid = require("../../../middleware/auth.middleware")
-const { createCat, getCats, getCat, deleteCat } = require("./categories.controller")
+const cC = require("./categories.controller")
 
-router.post('/', createCat)
-router.get('/', getCats)
-router.get('/:id', getCat)
-router.delete("/:id", deleteCat)
+router.post('/', cC.createCat)
+router.get('/', cC.getCats)
+router.get('/:id', cC.getCat)
+router.delete("/:id", cC.deleteCat)
 
 module.exports = router
