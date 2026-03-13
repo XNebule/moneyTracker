@@ -1,4 +1,5 @@
 const tS = require("./transactions.service");
+const ApiError = require("../../utils/ApiError");
 
 exports.createTransaction = async (req, res, next) => {
   try {
@@ -6,15 +7,11 @@ exports.createTransaction = async (req, res, next) => {
     const userId = req.user.userId;
 
     if (!title || amount == null || !type) {
-      const error = new Error("Title, Amount and Type are required");
-      error.status = 400;
-      throw error;
+      throw new ApiError("Title, Amount and Type are required!", 400);
     }
 
     if (!["expense", "revenue"].includes(type)) {
-      const error = new Error("Invalid transaction type");
-      error.status = 400;
-      throw error;
+      throw new ApiError("Invalid transaction type!", 400);
     }
 
     const data = await tS.createTransaction({
@@ -22,11 +19,15 @@ exports.createTransaction = async (req, res, next) => {
       amount,
       userId,
       type,
-      categoryId, 
+      categoryId,
       date,
     });
 
-    res.status(201).json(data);
+    res.status(201).json({
+      success: true,
+      message: "Transaction created!",
+      data
+    });
   } catch (err) {
     next(err);
   }
@@ -63,12 +64,13 @@ exports.getTransaction = async (req, res, next) => {
     const data = await tS.getTransactionById(id, userId);
 
     if (!data) {
-      const error = new Error("Transaction not found");
-      error.status = 404;
-      throw error;
+      throw new ApiError("Transaction not found!", 404);
     }
 
-    res.status(200).json(data);
+    res.status(200).json({
+      success: true,
+      data
+    });
   } catch (err) {
     next(err);
   }
@@ -82,12 +84,13 @@ exports.deleteTransaction = async (req, res, next) => {
     const data = await tS.deleteTransaction(id, userId);
 
     if (!data) {
-      const error = new Error("Transaction not found");
-      error.status = 404;
-      throw error;
+      throw new ApiError("Transaction not found!", 404);
     }
 
-    res.json({ message: "Deleted successfully" });
+    res.status(200).json({
+      success: true,
+      message: "Deleted successfully"
+    });
   } catch (err) {
     next(err);
   }
@@ -100,9 +103,7 @@ exports.updateTransaction = async (req, res, next) => {
     const userId = req.user.userId;
 
     if (!title || amount == null || !type) {
-      const error = new Error("Title, amount and type are required");
-      error.status = 400;
-      throw error;
+      throw new ApiError("Title, amount and type are required", 400);
     }
 
     const data = await tS.updateTransaction(
@@ -116,12 +117,13 @@ exports.updateTransaction = async (req, res, next) => {
     );
 
     if (!data) {
-      const error = new Error("Transaction not found");
-      error.status = 404;
-      throw error;
+      throw new ApiError("Transaction not found", 404);
     }
 
-    res.json(data);
+    res.status(200).json({
+      success: true,
+      data
+    });
   } catch (err) {
     next(err);
   }

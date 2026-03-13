@@ -11,6 +11,7 @@ const analyticRoutes = require('./modules/analytics/analytics.routes')
 
 const authMiddleware = require("../middleware/auth.middleware");
 const errorMiddleware = require("../middleware/error.middleware");
+const ApiError = require("./utils/ApiError");
 
 const app = express();
 app.use(helmet())
@@ -36,6 +37,11 @@ app.use("/api/dashboard", authMiddleware, dashboardRoutes)
 app.use("/api/transaction", authMiddleware, transactionRoutes)
 app.use("/api/category", authMiddleware, categoryRoutes)
 app.use("/api/analytic", authMiddleware, analyticRoutes)
+
+app.use((req, res, next) => {
+    const error = new ApiError("Route not found", 404)
+    next(error)
+})
 
 app.use(errorMiddleware);
 

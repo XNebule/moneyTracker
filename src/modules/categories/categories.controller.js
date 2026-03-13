@@ -1,3 +1,4 @@
+const ApiError = require("../../utils/ApiError");
 const cS = require("./categories.service");
 
 exports.createCat = async (req, res, next) => {
@@ -6,16 +7,16 @@ exports.createCat = async (req, res, next) => {
     const userId = req.user.userId;
 
     if (!name) {
-      const error = new Error("Field cannot be empty!");
-      error.status = 400;
-      throw error;
+      throw new ApiError("Field cannot be empty!", 400);
     }
 
     const data = await cS.createCategory(name, userId);
+
     res.status(201).json({
       success: true,
       data,
     });
+
   } catch (err) {
     next(err);
   }
@@ -27,12 +28,14 @@ exports.getCats = async (req, res, next) => {
     const data = await cS.getCategories(userId);
 
     if (data.lenth === 0) {
-      const error = new Error("Category not found!");
-      error.status = 404;
-      throw error;
+      throw new ApiError("Category not found!", 404);
     }
 
-    res.status(200).json(data);
+    res.status(200).json({
+      success: true,
+      data
+    });
+
   } catch (err) {
     next(err);
   }
@@ -42,16 +45,18 @@ exports.getCat = async (req, res, next) => {
   try {
     const { id } = req.params;
     const userId = req.user.userId;
-    
+
     const data = await cS.getCatById(id, userId);
-    
+
     if (!data) {
-      const error = new Error("Category not found!")
-      error.status = 404
-      throw error
+      throw new ApiError("Category not found!", 404);
     }
 
-    res.status(200).json(data);
+    res.status(200).json({
+      success: true,
+      data
+    });
+
   } catch (err) {
     next(err);
   }
@@ -64,12 +69,14 @@ exports.deleteCat = async (req, res, next) => {
     const data = await cS.deleteCategories(id, userId);
 
     if (!data) {
-      const error = new Error("Result can't be found!")
-      error.status = 404
-      throw error
+      throw new ApiError("Result can't be found", 404);
     }
 
-    res.json({ Message: "Deleted Successfully!" });
+    res.status(200).json({
+      success: true,
+      Message: "Deleted Successfully!"
+    });
+
   } catch (err) {
     next(err);
   }
@@ -77,30 +84,26 @@ exports.deleteCat = async (req, res, next) => {
 
 exports.updateCat = async (req, res, next) => {
   try {
-    const { id } = req.params
-    const { name } = req.body
-    const userId = req.user.userId
-    
+    const { id } = req.params;
+    const { name } = req.body;
+    const userId = req.user.userId;
+
     if (!name) {
-      const error = new Error("Category name is required")
-      error.status = 400
-      throw error
+      throw new ApiError("Category name is required", 400);
     }
 
-    const data = await cS.updateCategory(id, name, userId)
+    const data = await cS.updateCategory(id, name, userId);
 
     if (!data) {
-      const error = new Error("Category not found")
-      error.status = 404
-      throw error
+      throw new ApiError("Category not found", 404);
     }
 
-    res.json({
+    res.status(200).json({
       success: true,
       data
-    })
-
+    });
+    
   } catch (err) {
-    next(err)
+    next(err);
   }
-}
+};
