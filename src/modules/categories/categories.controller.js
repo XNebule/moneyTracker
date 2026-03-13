@@ -1,4 +1,4 @@
-const cs = require("./categories.service");
+const cS = require("./categories.service");
 
 exports.createCat = async (req, res, next) => {
   try {
@@ -11,7 +11,7 @@ exports.createCat = async (req, res, next) => {
       throw error;
     }
 
-    const data = await cs.createCategory(name, userId);
+    const data = await cS.createCategory(name, userId);
     res.status(201).json({
       success: true,
       data,
@@ -24,7 +24,7 @@ exports.createCat = async (req, res, next) => {
 exports.getCats = async (req, res, next) => {
   try {
     const userId = req.user.userId;
-    const data = await cs.getCategories(userId);
+    const data = await cS.getCategories(userId);
 
     if (data.lenth === 0) {
       const error = new Error("Category not found!");
@@ -43,7 +43,7 @@ exports.getCat = async (req, res, next) => {
     const { id } = req.params;
     const userId = req.user.userId;
     
-    const data = await cs.getCatById(id, userId);
+    const data = await cS.getCatById(id, userId);
     
     if (!data) {
       const error = new Error("Category not found!")
@@ -61,7 +61,7 @@ exports.deleteCat = async (req, res, next) => {
   try {
     const { id } = req.params;
     const userId = req.user.userId;
-    const data = await cs.deleteCategories(id, userId);
+    const data = await cS.deleteCategories(id, userId);
 
     if (!data) {
       const error = new Error("Result can't be found!")
