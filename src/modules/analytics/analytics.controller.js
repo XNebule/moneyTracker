@@ -41,3 +41,18 @@ exports.getCatBreakdown = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.getInsights = async (req, res, next) => {
+  try {
+    const userId = req.user.userId
+    const data = await aS.getInsights(userId)
+
+    res.status(200).json({
+      success: true,
+      data
+    })
+
+  } catch (err) {
+    next(err)
+  }
+}
