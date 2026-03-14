@@ -3,6 +3,9 @@ const helmet = require("helmet")
 const cors = require("cors")
 const rateLimit = require("express-rate-limit")
 
+const swaggerUi = require("swagger-ui-express")
+const swaggerSpec = require("./config/swagger")
+
 const authRoutes = require("./modules/auth/auth.routes");
 const dashboardRoutes = require("./modules/dashboards/dashboards.routes")
 const transactionRoutes = require("./modules/transactions/transactions.routes")
@@ -31,8 +34,9 @@ app.use(limiter)
 app.use(express.json());
 app.use(express.static("public"));
 
-app.use("/api/auth", authRoutes);
+app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
+app.use("/api/auth", authRoutes);
 app.use("/api/dashboard", authMiddleware, dashboardRoutes)
 app.use("/api/transaction", authMiddleware, transactionRoutes)
 app.use("/api/category", authMiddleware, categoryRoutes)
@@ -44,5 +48,6 @@ app.use((req, res, next) => {
 })
 
 app.use(errorMiddleware);
+
 
 module.exports = app;
